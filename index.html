@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pour Inès, mon Amour</title>
+    <link href="https://fonts.googleapis.com/css2?family=Homemade+Apple&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #fdf2f2; 
+            font-family: 'Dancing Script', cursive;
+            color: #4a3333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #d63384;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Effet Papier à lettre */
+        .letter {
+            background: #fff;
+            background-image: linear-gradient(#e1e1e1 1px, transparent 1px); /* Lignes de cahier */
+            background-size: 100% 2.5rem;
+            padding: 50px 40px;
+            border-radius: 2px;
+            box-shadow: 5px 5px 20px rgba(0,0,0,0.1);
+            font-family: 'Homemade Apple', cursive; /* Écriture manuscrite réaliste */
+            font-size: 1.2rem;
+            line-height: 2.5rem; /* Aligné sur les lignes du fond */
+            text-align: left;
+            margin-bottom: 40px;
+            position: relative;
+            transform: rotate(-1deg); /* Légère rotation pour le côté naturel */
+            border: 1px solid #efefef;
+        }
+
+        /* Styles du Carousel */
+        .carousel {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 380px;
+            margin: 0 auto 40px;
+            overflow: hidden;
+            border-radius: 5px;
+            border: 10px solid white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transform: rotate(1deg);
+        }
+
+        .carousel img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            animation: fade 1.5s;
+        }
+
+        @keyframes fade {
+            from {opacity: .4} 
+            to {opacity: 1}
+        }
+
+        .music-control {
+            cursor: pointer;
+            background: #d63384;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-family: sans-serif;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+        
+        .music-control:hover {
+            transform: scale(1.05);
+            background: #b52a6f;
+        }
+
+        .heart-icon {
+            color: #d63384;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+
+<script>
+    function createHeart() {
+        const heart = document.createElement('div');
+        heart.innerHTML = '❤';
+        heart.style.position = 'fixed';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.top = '-20px';
+        heart.style.color = '#d63384';
+        heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+        heart.style.opacity = Math.random();
+        heart.style.zIndex = '1000';
+        heart.style.transition = 'transform 5s linear, opacity 5s linear';
+        
+        document.body.appendChild(heart);
+
+        setTimeout(() => {
+            heart.style.transform = `translateY(100vh) rotate(${Math.random() * 360}deg)`;
+            heart.style.opacity = '0';
+        }, 100);
+
+        setTimeout(() => { heart.remove(); }, 6000);
+    }
+    setInterval(createHeart, 500); // Un nouveau cœur toutes les demi-secondes
+</script>
+
+<body>
+
+    <div class="container">
+        <h1>Pour toi, ma chère Inès</h1>
+
+        <div class="carousel">
+            <img src="photo1.jpg" style="display:block;">
+            <img src="photo2.jpg">
+            <img src="photo3.jpg">
+        </div>
+
+        <div class="letter">
+            <p>Ma chère Inès,</p>
+            <p>
+                Ceci est un petit espace rien qu'à nous... <br>
+                Chaque jour à tes côtés est un cadeau. Je voulais créer cette page pour te rappeler à quel point je t'aime et combien chaque moment passé avec toi est précieux.
+            </p>
+            <p>Ta présence illumine ma vie.</p>
+            <p>Je t'aime pour toujours,</p>
+            <p style="text-align: right; margin-top: 40px;"><strong>Omar <span class="heart-icon">❤</span></strong></p>
+        </div>
+
+        <audio id="bgMusic" loop>
+            <source src="musique.mp3" type="audio/mpeg">
+        </audio>
+        <button class="music-control" onclick="toggleMusic()">🎵 Cliquer pour l'ambiance</button>
+    </div>
+
+    <script>
+        // Logique du Carousel
+        let slideIndex = 0;
+        const slides = document.querySelectorAll(".carousel img");
+
+        function showSlides() {
+            if (slides.length === 0) return;
+            slides.forEach(s => s.style.display = "none");
+            slideIndex++;
+            if (slideIndex > slides.length) {slideIndex = 1}
+            slides[slideIndex-1].style.display = "block";
+            setTimeout(showSlides, 3500); 
+        }
+        showSlides();
+
+        // Logique Musique
+        function toggleMusic() {
+            const music = document.getElementById("bgMusic");
+            const btn = document.querySelector(".music-control");
+            if (music.paused) {
+                music.play();
+                btn.innerText = "⏸️ Pause la musique";
+            } else {
+                music.pause();
+                btn.innerText = "🎵 Jouer notre musique";
+            }
+        }
+    </script>
+</body>
+</html>
