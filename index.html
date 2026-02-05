@@ -9,202 +9,315 @@
         :root {
             --bg-pink: #ffb7c5; 
             --accent: #d63384;
+            --white: #ffffff;
+            --gold: #d4af37;
         }
 
         body {
             margin: 0;
-            min-height: 100vh; /* Changé de height: 100vh pour permettre l'extension */
-            display: flex;
+            min-height: 100vh;
+            background-color: var(--bg-pink);
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+
+        .page {
+            display: none;
+            min-height: 100vh;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background-color: var(--bg-pink);
-            font-family: 'Poppins', sans-serif;
-            overflow-x: hidden; /* Empêche le scroll horizontal */
-            overflow-y: auto;   /* ACTIVE LE SCROLL VERTICAL */
-            perspective: 1000px;
-            padding-bottom: 300px; /* Espace pour scroller jusqu'aux photos en bas */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .active-page { display: flex; }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.7);
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 1.2rem;
         }
 
         h1 {
             font-family: 'Dancing Script';
             color: white;
             font-size: clamp(2.5rem, 8vw, 4rem);
-            position: absolute;
-            top: 20px;
             text-shadow: 2px 4px 10px rgba(0,0,0,0.1);
             text-align: center;
-            width: 100%;
+            margin-bottom: 30px;
         }
 
-        /* --- LE BOUTON MAGIQUE --- */
-        #magic-button {
+        /* --- ACCUEIL --- */
+        .menu-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            max-width: 400px;
+        }
+
+        .main-btn {
             width: 100px;
             height: 100px;
             background: white;
             border-radius: 50%;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
+            font-size: 2rem;
             cursor: pointer;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: 0.5s;
-            z-index: 100;
-            animation: pulse 2s infinite;
-            margin-top: 50px;
+            transition: 0.3s;
+            border: none;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
-            70% { transform: scale(1.1); box-shadow: 0 0 0 20px rgba(255,255,255,0); }
-            100% { transform: scale(1); }
+        .main-btn:hover { transform: scale(1.1); }
+
+        .btn-label {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: var(--accent);
+            margin-top: 5px;
+            text-align: center;
         }
 
-        /* --- LA LETTRE --- */
-        #letter-box {
+        /* --- TIMELINE (DATES) --- */
+        .timeline {
+            width: 90%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-left: 20px;
+            border-left: 3px dashed var(--accent);
+        }
+
+        .timeline-item::before {
+            content: '❤️';
             position: absolute;
+            left: -13px;
+            background: white;
+            font-size: 12px;
+        }
+
+        .date-text {
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 0.9rem;
+            min-width: 85px;
+        }
+
+        .event-desc {
+            font-size: 0.95rem;
+            color: #444;
+        }
+
+        .wedding-special {
+            background: #fff5f8;
+            border: 2px solid var(--gold);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        /* --- SURPRISE --- */
+        #letter-box {
             width: 85%;
             max-width: 420px;
             background: #fffef2;
-            padding: 30px 20px;
+            padding: 30px;
             border-radius: 10px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.1);
             font-family: 'Homemade Apple', cursive;
             text-align: center;
-            opacity: 0;
-            transform: scale(0.5) translateY(0);
-            transition: 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 50;
-            pointer-events: none;
-            font-size: clamp(0.8rem, 3.5vw, 1rem);
+            margin-bottom: 200px;
         }
 
-        /* --- LES PHOTOS POLAROID 3D --- */
-        .photo {
-            position: absolute;
-            width: clamp(140px, 40vw, 180px);
-            background: white;
-            padding: 8px 8px 25px 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            opacity: 0;
-            transition: 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 10;
-            margin-top: 250px; /* Ton réglage conservé */
-        }
+        .photo { position: absolute; width: clamp(130px, 35vw, 170px); background: white; padding: 8px 8px 25px 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .photo img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+        .p1 { transform: translate(-110%, 150px) rotate(-10deg); }
+        .p2 { transform: translate(0, 240px) rotate(0deg); }
+        .p3 { transform: translate(110%, 150px) rotate(10deg); }
 
-        .photo img { width: 100%; height: auto; aspect-ratio: 1/1; object-fit: cover; }
+        /* --- QUIZ --- */
+        .quiz-card { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
+        .options-grid { display: grid; gap: 10px; margin-top: 20px; }
+        .option-btn { background: #f8f9fa; border: 2px solid #eee; padding: 12px; border-radius: 10px; cursor: pointer; font-family: 'Poppins', sans-serif; width: 100%; }
+        .option-btn:hover { background: var(--bg-pink); border-color: var(--accent); }
 
-        .active #magic-button { transform: scale(0); opacity: 0; pointer-events: none; }
-        .active #letter-box { opacity: 1; transform: scale(1) translateY(-100px); pointer-events: auto; }
-        
-        /* Disposition en arc RESPONSIVE */
-        .active .p1 { 
-            opacity: 1; 
-            transform: translate(-35%, 150px) rotate(-15deg) rotateY(10deg); 
-        }
-        .active .p2 { 
-            opacity: 1; 
-            transform: translate(0, 280px) rotate(0deg) rotateX(15deg); 
-        }
-        .active .p3 { 
-            opacity: 1; 
-            transform: translate(35%, 150px) rotate(15deg) rotateY(-10deg); 
-        }
-
-        /* Ajustement PC */
-        @media (min-width: 768px) {
-            .active .p1 { transform: translate(-320px, 80px) rotate(-15deg) rotateY(10deg); }
-            .active .p2 { transform: translate(0px, 250px) rotate(0deg) rotateX(15deg); }
-            .active .p3 { transform: translate(320px, 80px) rotate(15deg) rotateY(-10deg); }
-            .active #letter-box { transform: scale(1) translateY(-50px); }
-        }
-
-        /* --- BOUTON MUSIQUE --- */
-        .music-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            color: var(--accent);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 0.8rem;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            z-index: 200;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .heart {
-            position: fixed;
-            top: -20px;
-            animation: fall linear forwards;
-            z-index: 1;
-        }
+        .music-toggle { position: fixed; bottom: 20px; right: 20px; background: white; color: var(--accent); border: none; padding: 10px 20px; border-radius: 50px; font-weight: bold; z-index: 1000; }
+        .heart-particle { position: fixed; top: -20px; animation: fall linear forwards; pointer-events: none; }
         @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
     </style>
 </head>
-<body id="main-content">
+<body>
 
-    <h1>Pour ma Inès ❤️</h1>
+    <button class="back-btn" id="backBtn" style="display:none" onclick="showPage('home-page')">⬅️</button>
 
-    <div id="magic-button" onclick="revealMagic()">❤️</div>
+    <section id="home-page" class="page active-page">
+        <h1>Coucou ma Inès ❤️</h1>
+        <div class="menu-container">
+            <button class="main-btn" onclick="showPage('surprise-page')">
+                ❤️
+                <span class="btn-label">Surprise</span>
+            </button>
+            <button class="main-btn" onclick="showPage('dates-page')">
+                📅
+                <span class="btn-label">Nos Dates</span>
+            </button>
+            <button class="main-btn" onclick="showPage('quiz-page')">
+                ❓
+                <span class="btn-label">Le Quiz</span>
+            </button>
+        </div>
+    </section>
 
-    <div id="letter-box">
-        <p>Ma chère Inès,</p>
-        <p>Chaque jour à tes côtés est un nouveau chapitre d'un livre que je ne veux jamais refermer.</p>
-        <p>Tu es ma force, ma joie et mon plus beau voyage. Merci d'être toi !</p>
-        <p style="text-align: right; margin-top: 20px;">Ton Omar ❤️</p>
-    </div>
+    <section id="dates-page" class="page">
+        <h1>Nos Moments Clés ⏳</h1>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="date-text">27/04/2024</div>
+                <div class="event-desc">Notre tout premier rendez-vous... là où tout a commencé. ✨</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date-text">22/02/2025</div>
+                <div class="event-desc">Ton anniversaire & le jour où je t'ai demandé de lier ton destin au mien. 💍</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date-text">23/02/2025</div>
+                <div class="event-desc">La rencontre de nos familles. Un pas de plus ensemble. 🤝</div>
+            </div>
+            <div class="timeline-item">
+                <div class="date-text">06/09/2025</div>
+                <div class="event-desc">Nos fiançailles officielles. La fête de notre amour ! 🎉</div>
+            </div>
+            <div class="timeline-item wedding-special">
+                <div class="date-text">19/08/2026</div>
+                <div class="event-desc">
+                    <b>Notre Grand Jour : Le Mariage 👰🤵</b>
+                    <div id="countdown" style="color: var(--accent); font-weight: bold; margin-top: 5px;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <div class="photo p1"><img src="photo1.jpg"></div>
-    <div class="photo p2"><img src="photo2.jpg"></div>
-    <div class="photo p3"><img src="photo3.jpg"></div>
+    <section id="surprise-page" class="page">
+        <div id="letter-box">
+            <p>Ma chère Inès,</p>
+            <p>Chaque jour à tes côtés est un nouveau chapitre d'un livre que je ne veux jamais refermer.</p>
+            <p>Tu es ma force, ma joie et mon plus beau voyage. Merci d'être toi !</p>
+            <p style="text-align: right; margin-top: 20px;">Ton Omar ❤️</p>
+        </div>
+        <div class="photo p1"><img src="photo1.jpg"></div>
+        <div class="photo p2"><img src="photo2.jpg"></div>
+        <div class="photo p3"><img src="photo3.jpg"></div>
+    </section>
+
+    <section id="quiz-page" class="page">
+        <div class="quiz-card" id="quiz-card"></div>
+    </section>
 
     <button class="music-toggle" onclick="toggleMusic()">
         <span id="musicon">🎵</span> <span id="musictext">Ambiance</span>
     </button>
-
-    <audio id="bgMusic" loop>
-        <source src="musique.mp3" type="audio/mpeg">
-    </audio>
+    <audio id="bgMusic" loop><source src="musique.mp3" type="audio/mpeg"></audio>
 
     <script>
-        function revealMagic() {
-            document.getElementById('main-content').classList.add('active');
-            setInterval(createHeart, 500);
-        }
-
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('heart');
-            heart.innerHTML = '❤️';
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.fontSize = Math.random() * 15 + 10 + 'px';
-            heart.style.animationDuration = Math.random() * 2 + 3 + 's';
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 5000);
-        }
-
-        function toggleMusic() {
-            const music = document.getElementById('bgMusic');
-            const icon = document.getElementById('musicon');
-            const text = document.getElementById('musictext');
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+            document.getElementById(pageId).classList.add('active-page');
+            document.getElementById('backBtn').style.display = (pageId === 'home-page') ? 'none' : 'block';
             
-            if (music.paused) {
-                music.play();
-                icon.innerText = "⏸️";
-                text.innerText = "Pause";
+            if(pageId === 'quiz-page') initQuiz();
+            if(pageId === 'surprise-page') startHearts();
+            if(pageId === 'dates-page') updateCountdown();
+        }
+
+        // --- COMPTE A REBOURS MARIAGE ---
+        function updateCountdown() {
+            const weddingDate = new Date("August 19, 2026").getTime();
+            const now = new Date().getTime();
+            const diff = weddingDate - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            if (days > 0) {
+                document.getElementById('countdown').innerText = "Plus que " + days + " jours avant de te dire OUI pour la vie ! ❤️";
             } else {
-                music.pause();
-                icon.innerText = "🎵";
-                text.innerText = "Ambiance";
+                document.getElementById('countdown').innerText = "C'est le grand jour ! Je t'aime ❤️";
             }
+        }
+
+        // --- QUIZ LOGIC ---
+        const questions = [
+            { q: "Quel était la veste que je portais lors de notre tout premier rendez-vous ?", a: ["Ma Sur-Chemise", "Ma veste beige", "Ma veste sans manche", "ma veste blanche"], correct: 0 },
+            { q: "Quelle est la date exacte (jour/mois) où je t'ai dit 'Je t'aime' pour la toute première fois ? (Pas de triche ! 👀)", a: ["05 Mai", "11 Mai", "15 Mai", "24 Mai"], correct: 1},
+            { q: "Où était notre premier resto ?", a: ["Dar Zarrouk", "Villa Didon", "Kunafaty", "Salle à Manger"], correct: 2 },
+            { q: "Quelle est la destination de voyage dont je te parle le plus souvent ?", a: ["Prague", "Italie", "France", "Seychelles"], correct: 1 },
+            { q: "Je t'aime à quel point ?", a: ["Beaucoup", "Passionnément", "À la folie", "L'infini et au-delà"], correct: 3 }
+        ];
+
+        let currentQ = 0, score = 0;
+        function initQuiz() {
+            currentQ = 0; score = 0;
+            const card = document.getElementById('quiz-card');
+            card.innerHTML = `<h2 id="question-text"></h2><div id="options" class="options-grid"></div>`;
+            showQuestion();
+        }
+        function showQuestion() {
+            const q = questions[currentQ];
+            document.getElementById('question-text').innerText = q.q;
+            const div = document.getElementById('options');
+            div.innerHTML = '';
+            q.a.forEach((opt, i) => {
+                const b = document.createElement('button');
+                b.className = 'option-btn'; b.innerText = opt;
+                b.onclick = () => { if(i===q.correct) score++; currentQ++; if(currentQ<questions.length) showQuestion(); else showResult(); };
+                div.appendChild(b);
+            });
+        }
+        function showResult() {
+            const s = Math.round((score/questions.length)*100);
+            const c = document.getElementById('quiz-card');
+            if(s>=80) {
+                c.innerHTML = `<h2>🎉 ${s}%</h2><p>Bravo mon amour ! ❤️</p><p><b>Ton cadeau arrive... 🎁</b></p>`;
+                startHearts();
+            } else {
+                c.innerHTML = `<h2>💔 ${s}%</h2><p>Réessaie mon cœur ! 😤</p><button class="option-btn" onclick="initQuiz()">Réessayer</button>`;
+            }
+        }
+
+        // --- EFFETS ---
+        let hInt;
+        function startHearts() { if(hInt) clearInterval(hInt); hInt = setInterval(createHeart, 400); }
+        function createHeart() {
+            const h = document.createElement('div');
+            h.classList.add('heart-particle'); h.innerHTML = '❤️';
+            h.style.left = Math.random()*100+'vw'; h.style.fontSize = (Math.random()*20+10)+'px';
+            h.style.animationDuration = (Math.random()*3+2)+'s';
+            document.body.appendChild(h); setTimeout(() => h.remove(), 5000);
+        }
+        function toggleMusic() {
+            const m = document.getElementById('bgMusic');
+            if (m.paused) { m.play(); musicon.innerText="⏸️"; musictext.innerText="Pause"; }
+            else { m.pause(); musicon.innerText="🎵"; musictext.innerText="Ambiance"; }
         }
     </script>
 </body>
