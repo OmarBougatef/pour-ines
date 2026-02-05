@@ -21,28 +21,30 @@
             background-color: var(--bg-pink);
             font-family: 'Poppins', sans-serif;
             overflow: hidden;
-            perspective: 1000px; /* Nécessaire pour l'effet 3D */
+            perspective: 1000px;
         }
 
         h1 {
             font-family: 'Dancing Script';
             color: white;
-            font-size: 4rem;
+            font-size: clamp(2.5rem, 8vw, 4rem); /* S'adapte à la taille de l'écran */
             position: absolute;
-            top: 40px;
+            top: 20px;
             text-shadow: 2px 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 100%;
         }
 
         /* --- LE BOUTON MAGIQUE --- */
         #magic-button {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
+            font-size: 2.5rem;
             cursor: pointer;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             transition: 0.5s;
@@ -59,9 +61,10 @@
         /* --- LA LETTRE --- */
         #letter-box {
             position: absolute;
-            width: 420px;
+            width: 85%; /* Responsive */
+            max-width: 420px;
             background: #fffef2;
-            padding: 40px;
+            padding: 30px 20px;
             border-radius: 10px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.1);
             font-family: 'Homemade Apple', cursive;
@@ -71,57 +74,66 @@
             transition: 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 50;
             pointer-events: none;
+            font-size: clamp(0.8rem, 3.5vw, 1rem);
         }
 
         /* --- LES PHOTOS POLAROID 3D --- */
         .photo {
             position: absolute;
-            width: 180px;
+            width: clamp(120px, 35vw, 180px); /* Plus petit sur mobile */
             background: white;
-            padding: 10px 10px 35px 10px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            padding: 8px 8px 25px 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             opacity: 0;
             transition: 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 10;
         }
 
-        .photo img { width: 100%; height: 180px; object-fit: cover; }
+        .photo img { width: 100%; height: auto; aspect-ratio: 1/1; object-fit: cover; }
 
-        /* Animation une fois cliqué */
         .active #magic-button { transform: scale(0); opacity: 0; pointer-events: none; }
-        .active #letter-box { opacity: 1; transform: scale(1) translateY(-50px); pointer-events: auto; }
+        .active #letter-box { opacity: 1; transform: scale(1) translateY(-80px); pointer-events: auto; }
         
-        /* Disposition en arc avec inclinaison 3D */
+        /* Disposition en arc RESPONSIVE */
         .active .p1 { 
             opacity: 1; 
-            transform: translate(-320px, 80px) rotate(-15deg) rotateY(10deg); 
+            transform: translate(-35%, 120px) rotate(-15deg) rotateY(10deg); 
         }
         .active .p2 { 
             opacity: 1; 
-            transform: translate(0px, 250px) rotate(0deg) rotateX(15deg); 
+            transform: translate(0, 240px) rotate(0deg) rotateX(15deg); 
         }
         .active .p3 { 
             opacity: 1; 
-            transform: translate(320px, 80px) rotate(15deg) rotateY(-10deg); 
+            transform: translate(35%, 120px) rotate(15deg) rotateY(-10deg); 
+        }
+
+        /* Ajustement spécial pour PC */
+        @media (min-width: 768px) {
+            .active .p1 { transform: translate(-320px, 80px) rotate(-15deg) rotateY(10deg); }
+            .active .p2 { transform: translate(0px, 250px) rotate(0deg) rotateX(15deg); }
+            .active .p3 { transform: translate(320px, 80px) rotate(15deg) rotateY(-10deg); }
+            .active #letter-box { transform: scale(1) translateY(-50px); }
         }
 
         /* --- BOUTON MUSIQUE (BAS À DROITE) --- */
         .music-toggle {
             position: fixed;
-            bottom: 30px;
-            right: 30px; /* Placé à droite comme demandé */
+            bottom: 20px;
+            right: 20px;
             background: white;
             color: var(--accent);
             border: none;
-            padding: 12px 25px;
+            padding: 10px 20px;
             border-radius: 50px;
             font-weight: bold;
+            font-size: 0.8rem;
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             z-index: 200;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .heart {
@@ -143,15 +155,21 @@
         <p>Ma chère Inès,</p>
         <p>Chaque jour à tes côtés est un nouveau chapitre d'un livre que je ne veux jamais refermer.</p>
         <p>Tu es ma force, ma joie et mon plus beau voyage. Merci d'être toi !</p>
-        <p style="text-align: right; margin-top: 30px;">Ton Omar ❤️</p>
+        <p style="text-align: right; margin-top: 20px;">Ton Omar ❤️</p>
     </div>
 
-    <div class="photo p1"><img src="photo1.jpg"></div>
-    <div class="photo p2"><img src="photo2.jpg"></div>
-    <div class="photo p3"><img src="photo3.jpg"></div>
+    <div class="photo p1"style="
+    margin-top: 250px;
+"><img src="photo1.jpg"></div>
+    <div class="photo p2"style="
+    margin-top: 250px;
+"><img src="photo2.jpg"></div>
+    <div class="photo p3"style="
+    margin-top: 250px;
+"><img src="photo3.jpg"></div>
 
     <button class="music-toggle" onclick="toggleMusic()">
-        <span id="musicon">🎵</span> <span id="musictext">Activer l'ambiance</span>
+        <span id="musicon">🎵</span> <span id="musictext">Ambiance</span>
     </button>
 
     <audio id="bgMusic" loop>
@@ -161,8 +179,7 @@
     <script>
         function revealMagic() {
             document.getElementById('main-content').classList.add('active');
-            setInterval(createHeart, 400);
-            // La musique ne se lance plus automatiquement ici
+            setInterval(createHeart, 500);
         }
 
         function createHeart() {
@@ -170,8 +187,8 @@
             heart.classList.add('heart');
             heart.innerHTML = '❤️';
             heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
-            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
+            heart.style.fontSize = Math.random() * 15 + 10 + 'px';
+            heart.style.animationDuration = Math.random() * 2 + 3 + 's';
             document.body.appendChild(heart);
             setTimeout(() => heart.remove(), 5000);
         }
@@ -188,7 +205,7 @@
             } else {
                 music.pause();
                 icon.innerText = "🎵";
-                text.innerText = "Activer l'ambiance";
+                text.innerText = "Ambiance";
             }
         }
     </script>
