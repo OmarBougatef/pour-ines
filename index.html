@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Join Me! - Un jeu pour toi</title>
+    <title>Join Me! - Pour mon amour</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
         :root {
-            --bg-color: #2c3e50;
-            --wall-color: #34495e;
-            --path-color: #ecf0f1;
-            --accent-color: #e74c3c;
-            --gold: #f1c40f;
+            --bg-color: #1a1a2e;
+            --wall-color: #16213e; /* Murs sombres */
+            --path-color: #0f3460; /* Sol */
+            --accent-color: #e94560; /* Rose/Rouge */
+            --gold: #ffd700;
             --text-color: #fff;
         }
 
@@ -28,16 +28,14 @@
             justify-content: center;
             height: 100vh;
             overflow: hidden;
-            touch-action: none; /* Empêche le zoom sur mobile */
+            touch-action: none;
         }
 
-        /* Écrans */
+        /* ---- ECRANS ---- */
         #splash-screen, #game-screen, #win-modal {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -53,62 +51,57 @@
             pointer-events: none;
         }
 
-        /* Splash Screen */
+        /* ---- ACCUEIL ---- */
         h1 {
-            font-size: 40px;
+            font-size: 30px;
             color: var(--accent-color);
-            text-shadow: 4px 4px 0px #000;
+            text-shadow: 3px 3px 0 #000;
             margin-bottom: 20px;
             text-align: center;
-            line-height: 1.5;
         }
 
         .pixel-btn {
-            background-color: var(--gold);
+            background-color: var(--accent-color);
             border: 4px solid #fff;
-            padding: 20px 40px;
+            padding: 15px 30px;
             font-family: 'Press Start 2P', cursive;
-            font-size: 20px;
-            color: #000;
+            font-size: 16px;
+            color: #fff;
             cursor: pointer;
-            box-shadow: 6px 6px 0px #000;
-            active: box-shadow: 2px 2px 0px #000;
-            transform: translateY(4px);
-            margin-top: 30px;
+            box-shadow: 4px 4px 0 #000;
+            margin-top: 20px;
         }
+        .pixel-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #000; }
 
-        .pixel-btn:active {
-            transform: translate(4px, 4px);
-            box-shadow: 2px 2px 0px #000;
-        }
-
-        /* Canvas du Jeu */
+        /* ---- JEU ---- */
         #game-container {
             position: relative;
             border: 4px solid #fff;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(233, 69, 96, 0.4);
+            margin-bottom: 15px;
+            background: #000;
         }
 
         canvas {
             display: block;
-            image-rendering: pixelated; /* Rendu net pour le pixel art */
+            image-rendering: pixelated;
         }
 
-        /* Contrôles Mobiles */
+        /* ---- CONTROLES TACTILES ---- */
         #controls {
             display: grid;
             grid-template-columns: 60px 60px 60px;
             grid-template-rows: 60px 60px;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 8px;
         }
 
+        /* Cache les contrôles sur grand écran */
+        @media (min-width: 800px) { #controls { display: none; } }
+
         .d-pad-btn {
-            width: 60px;
-            height: 60px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border: 2px solid #fff;
+            width: 60px; height: 60px;
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255,255,255,0.4);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -116,47 +109,41 @@
             font-size: 24px;
             user-select: none;
             cursor: pointer;
+            color: #fff;
         }
-        
-        .d-pad-btn:active { background-color: rgba(255, 255, 255, 0.5); }
+        .d-pad-btn:active { background-color: var(--accent-color); }
         .up { grid-column: 2; grid-row: 1; }
         .left { grid-column: 1; grid-row: 2; }
         .down { grid-column: 2; grid-row: 2; }
         .right { grid-column: 3; grid-row: 2; }
 
-        /* Modal de Victoire */
-        #win-modal {
-            background-color: rgba(0, 0, 0, 0.9);
-        }
-        
-        .heart-beat {
-            font-size: 60px;
-            color: var(--accent-color);
-            animation: beat 1s infinite;
-        }
-
-        @keyframes beat {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
+        /* ---- VICTOIRE ---- */
+        #win-modal { background-color: rgba(0, 0, 0, 0.95); }
         .love-msg {
             margin: 20px;
             text-align: center;
-            line-height: 1.6;
-            font-size: 14px;
-            max-width: 80%;
+            line-height: 1.8;
+            font-size: 12px;
+            color: #dcdde1;
+            max-width: 85%;
+            border: 2px dashed var(--accent-color);
+            padding: 15px;
         }
+        .heart-beat {
+            font-size: 50px;
+            color: var(--accent-color);
+            animation: beat 0.8s infinite alternate;
+        }
+        @keyframes beat { 0% { transform: scale(1); } 100% { transform: scale(1.2); } }
 
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
-        <div style="font-size: 50px; margin-bottom: 20px;">🏰 ❤️ 🤴</div>
+        <div style="font-size: 50px; margin-bottom: 10px;">👸 ❤️</div>
         <h1>JOIN ME!</h1>
-        <p style="font-size: 12px; margin-bottom: 30px;">Trouve ton chemin vers mon cœur...</p>
+        <p style="font-size: 10px; margin-bottom: 30px; color: #a5b1c2;">Trouve ton chemin vers mon cœur...</p>
         <button class="pixel-btn" onclick="startGame()">JOUER</button>
     </div>
 
@@ -166,64 +153,65 @@
         </div>
         
         <div id="controls">
-            <div class="d-pad-btn up" ontouchstart="movePlayer(0, -1)" onmousedown="movePlayer(0, -1)">▲</div>
-            <div class="d-pad-btn left" ontouchstart="movePlayer(-1, 0)" onmousedown="movePlayer(-1, 0)">◀</div>
-            <div class="d-pad-btn down" ontouchstart="movePlayer(0, 1)" onmousedown="movePlayer(0, 1)">▼</div>
-            <div class="d-pad-btn right" ontouchstart="movePlayer(1, 0)" onmousedown="movePlayer(1, 0)">▶</div>
+            <div class="d-pad-btn up" ontouchstart="handleInput(0, -1, event)" onmousedown="movePlayer(0, -1)">▲</div>
+            <div class="d-pad-btn left" ontouchstart="handleInput(-1, 0, event)" onmousedown="movePlayer(-1, 0)">◀</div>
+            <div class="d-pad-btn down" ontouchstart="handleInput(0, 1, event)" onmousedown="movePlayer(0, 1)">▼</div>
+            <div class="d-pad-btn right" ontouchstart="handleInput(1, 0, event)" onmousedown="movePlayer(1, 0)">▶</div>
         </div>
     </div>
 
     <div id="win-modal" class="hidden">
         <div class="heart-beat">❤️</div>
-        <h1>TU AS GAGNÉ !</h1>
+        <h1 style="margin-top: 20px;">TU AS GAGNÉ !</h1>
         <div class="love-msg">
             Bravo mon amour !<br>
-            Peu importe la complexité du chemin,<br>
-            on finit toujours par se retrouver.<br>
-            Je t'aime !
+            Tu as trouvé le chemin.<br>
+            Peu importe les obstacles,<br>
+            je serai toujours là pour toi.<br><br>
+            <strong>Je t'aime !</strong>
         </div>
         <button class="pixel-btn" onclick="location.reload()">REJOUER</button>
     </div>
 
     <script>
-        // Configuration
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         
-        // Taille des cases (ajusté selon l'écran)
-        let tileSize = 25;
+        let tileSize = 28; // Taille des cases
         let cols, rows;
         let map = [];
         let player = { x: 1, y: 1 };
         let goal = { x: 1, y: 1 };
-        
-        // États du jeu
         let isGameRunning = false;
 
-        // Initialisation de la taille du canvas
+        // --- 1. CONFIGURATION DU CANVAS (Taille écran) ---
         function resizeCanvas() {
-            // On essaie de faire un carré qui rentre dans l'écran
-            const maxSize = Math.min(window.innerWidth - 40, window.innerHeight - 200); 
-            // On s'assure que c'est un multiple de tileSize impair pour le labyrinthe
-            let tiles = Math.floor(maxSize / tileSize);
-            if (tiles % 2 === 0) tiles--;
+            // On calcule combien de cases peuvent tenir sur l'écran
+            // On laisse un peu de marge pour les boutons (hauteur - 250px)
+            const maxWidth = window.innerWidth - 30;
+            const maxHeight = window.innerHeight - 240; 
             
-            cols = tiles;
-            rows = tiles;
-            
+            let tilesX = Math.floor(maxWidth / tileSize);
+            let tilesY = Math.floor(maxHeight / tileSize);
+
+            // Doit être impair pour l'algo de labyrinthe
+            if (tilesX % 2 === 0) tilesX--;
+            if (tilesY % 2 === 0) tilesY--;
+
+            cols = tilesX;
+            rows = tilesY;
+
             canvas.width = cols * tileSize;
             canvas.height = rows * tileSize;
         }
 
-        // Algorithme de génération de labyrinthe (Recursive Backtracker)
+        // --- 2. GENERATION DU LABYRINTHE ---
         function generateMaze() {
-            // Remplir de murs
             map = [];
+            // Remplir de murs
             for (let y = 0; y < rows; y++) {
                 let row = [];
-                for (let x = 0; x < cols; x++) {
-                    row.push(1); // 1 = Mur, 0 = Chemin
-                }
+                for (let x = 0; x < cols; x++) row.push(1);
                 map.push(row);
             }
 
@@ -232,86 +220,87 @@
             map[start.y][start.x] = 0;
             stack.push(start);
 
+            const directions = [{x:0, y:-2}, {x:0, y:2}, {x:-2, y:0}, {x:2, y:0}];
+
             while (stack.length > 0) {
                 const current = stack[stack.length - 1];
-                const neighbors = [];
-
-                // Vérifier voisins (saut de 2 cases)
-                const directions = [
-                    { x: 0, y: -2 }, { x: 0, y: 2 },
-                    { x: -2, y: 0 }, { x: 2, y: 0 }
-                ];
+                const validNeighbors = [];
 
                 for (let dir of directions) {
                     const nx = current.x + dir.x;
                     const ny = current.y + dir.y;
-
                     if (nx > 0 && nx < cols - 1 && ny > 0 && ny < rows - 1 && map[ny][nx] === 1) {
-                        neighbors.push(dir);
+                        validNeighbors.push(dir);
                     }
                 }
 
-                if (neighbors.length > 0) {
-                    const chosen = neighbors[Math.floor(Math.random() * neighbors.length)];
-                    // Casser le mur entre les deux
-                    map[current.y + chosen.y / 2][current.x + chosen.x / 2] = 0;
-                    // Marquer la nouvelle case
+                if (validNeighbors.length > 0) {
+                    const chosen = validNeighbors[Math.floor(Math.random() * validNeighbors.length)];
+                    map[current.y + chosen.y/2][current.x + chosen.x/2] = 0;
                     map[current.y + chosen.y][current.x + chosen.x] = 0;
                     stack.push({ x: current.x + chosen.x, y: current.y + chosen.y });
                 } else {
                     stack.pop();
                 }
             }
-            
-            // Placer le joueur et l'objectif
             player = { x: 1, y: 1 };
             goal = { x: cols - 2, y: rows - 2 };
-            
-            // S'assurer que l'objectif est vide (au cas où)
             map[goal.y][goal.x] = 0;
         }
 
-        // Dessin des Sprites (Pixel Art via Code)
-        function drawPlayer(x, y) {
+        // --- 3. DESSIN (Graphismes Améliorés) ---
+        
+        function drawPlayerSprite(x, y) {
             const cx = x * tileSize;
             const cy = y * tileSize;
-            const s = tileSize / 8; // Échelle du pixel
+            const s = tileSize / 16; // Echelle relative
 
-            // Princesse (Robe rose)
-            ctx.fillStyle = '#ff9ff3'; // Robe
-            ctx.fillRect(cx + 2*s, cy + 3*s, 4*s, 5*s);
-            ctx.fillStyle = '#feca57'; // Peau
-            ctx.fillRect(cx + 3*s, cy + 2*s, 2*s, 2*s); // Tête
-            ctx.fillStyle = '#5f27cd'; // Cheveux
-            ctx.fillRect(cx + 2*s, cy + 1*s, 4*s, 2*s);
-            ctx.fillRect(cx + 1*s, cy + 2*s, 1*s, 3*s); // Mèches
-            ctx.fillRect(cx + 6*s, cy + 2*s, 1*s, 3*s);
+            // Couleurs
+            const skin = '#f5cba7';
+            const hair = '#f1c40f'; 
+            const dress = '#e94560'; 
+            const dressLight = '#ff8fab'; 
+            const crown = '#ffd700';
+
+            // Dessin pixel par pixel (Princesse)
+            ctx.fillStyle = crown; ctx.fillRect(cx+6*s, cy+1*s, 4*s, 2*s); // Couronne
+            ctx.fillStyle = hair; ctx.fillRect(cx+4*s, cy+3*s, 8*s, 3*s); // Cheveux
+            ctx.fillStyle = skin; ctx.fillRect(cx+5*s, cy+5*s, 6*s, 5*s); // Tête
+            ctx.fillStyle = '#000'; ctx.fillRect(cx+6*s, cy+7*s, 1*s, 1*s); ctx.fillRect(cx+9*s, cy+7*s, 1*s, 1*s); // Yeux
+            ctx.fillStyle = dress; ctx.fillRect(cx+6*s, cy+10*s, 4*s, 2*s); // Corps
+            ctx.fillStyle = skin; ctx.fillRect(cx+4*s, cy+10*s, 2*s, 2*s); ctx.fillRect(cx+10*s, cy+10*s, 2*s, 2*s); // Mains
+            ctx.fillStyle = dress; ctx.fillRect(cx+5*s, cy+12*s, 6*s, 4*s); // Robe bas
+            ctx.fillStyle = hair; ctx.fillRect(cx+3*s, cy+5*s, 2*s, 6*s); ctx.fillRect(cx+11*s, cy+5*s, 2*s, 6*s); // Cheveux longs
         }
 
-        function drawGoal(x, y) {
-            const cx = x * tileSize;
-            const cy = y * tileSize;
-            const s = tileSize / 8;
+        function drawGoalSprite(x, y) {
+            const cx = x * tileSize + tileSize/2;
+            const cy = y * tileSize + tileSize/2;
+            
+            // Pulsation
+            const scale = 1 + Math.sin(Date.now() / 200) * 0.1;
+            const size = (tileSize / 2) * scale;
 
-            // Cœur / Prince
-            ctx.fillStyle = '#ff4757'; // Rouge Cœur
-            // Forme de coeur simple
-            ctx.fillRect(cx + 1*s, cy + 2*s, 2*s, 3*s);
-            ctx.fillRect(cx + 5*s, cy + 2*s, 2*s, 3*s);
-            ctx.fillRect(cx + 2*s, cy + 1*s, 1*s, 1*s);
-            ctx.fillRect(cx + 5*s, cy + 1*s, 1*s, 1*s);
-            ctx.fillRect(cx + 1*s, cy + 4*s, 6*s, 2*s);
-            ctx.fillRect(cx + 2*s, cy + 6*s, 4*s, 1*s);
-            ctx.fillRect(cx + 3*s, cy + 7*s, 2*s, 1*s);
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.fillStyle = "#e94560";
+            ctx.beginPath();
+            ctx.moveTo(0, size/2);
+            ctx.bezierCurveTo(0, -size/2, -size, -size/2, -size, -size/4);
+            ctx.bezierCurveTo(-size, size/2, 0, size*0.8, 0, size);
+            ctx.bezierCurveTo(0, size*0.8, size, size/2, size, -size/4);
+            ctx.bezierCurveTo(size, -size/2, size, -size/2, 0, size/2);
+            ctx.fill();
+            ctx.restore();
         }
 
         function draw() {
-            // Fond
-            ctx.fillStyle = '#2c3e50';
+            // Fond (Murs)
+            ctx.fillStyle = '#16213e';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Murs
-            ctx.fillStyle = '#ecf0f1'; // Couleur du chemin
+            // Chemin
+            ctx.fillStyle = '#0f3460';
             for (let y = 0; y < rows; y++) {
                 for (let x = 0; x < cols; x++) {
                     if (map[y][x] === 0) {
@@ -320,21 +309,20 @@
                 }
             }
 
-            drawPlayer(player.x, player.y);
-            drawGoal(goal.x, goal.y);
+            drawGoalSprite(goal.x, goal.y);
+            drawPlayerSprite(player.x, player.y);
         }
 
+        // --- 4. LOGIQUE JEU ---
         function movePlayer(dx, dy) {
             if (!isGameRunning) return;
+            const nx = player.x + dx;
+            const ny = player.y + dy;
 
-            const newX = player.x + dx;
-            const newY = player.y + dy;
-
-            // Collision avec les murs
-            if (newX >= 0 && newX < cols && newY >= 0 && newY < rows && map[newY][newX] === 0) {
-                player.x = newX;
-                player.y = newY;
-                draw();
+            if (nx >= 0 && nx < cols && ny >= 0 && ny < rows && map[ny][nx] === 0) {
+                player.x = nx;
+                player.y = ny;
+                // Pas besoin de redraw() ici car la boucle d'animation le fait
                 checkWin();
             }
         }
@@ -348,18 +336,31 @@
             }
         }
 
+        function gameLoop() {
+            if (isGameRunning) {
+                draw(); // Redessine en boucle pour l'animation du cœur
+                requestAnimationFrame(gameLoop);
+            }
+        }
+
         function startGame() {
             document.getElementById('splash-screen').classList.add('hidden');
             document.getElementById('game-screen').classList.remove('hidden');
             resizeCanvas();
             generateMaze();
-            draw();
             isGameRunning = true;
+            gameLoop();
         }
 
-        // Écouteur Clavier (PC)
+        function handleInput(dx, dy, e) {
+            e.preventDefault(); // Empeche le zoom tactile
+            movePlayer(dx, dy);
+        }
+
         window.addEventListener('keydown', (e) => {
             if (!isGameRunning) return;
+            if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault();
+            
             switch(e.key) {
                 case 'ArrowUp': movePlayer(0, -1); break;
                 case 'ArrowDown': movePlayer(0, 1); break;
