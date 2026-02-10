@@ -3,372 +3,293 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Join Me! - Pour mon amour</title>
+    <title>Romantic Game Box</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
         :root {
             --bg-color: #1a1a2e;
-            --wall-color: #16213e; /* Murs sombres */
-            --path-color: #0f3460; /* Sol */
-            --accent-color: #e94560; /* Rose/Rouge */
+            --wall-color: #16213e;
+            --path-color: #0f3460;
+            --accent-color: #e94560;
             --gold: #ffd700;
             --text-color: #fff;
+            --cat1: #4834d4;
+            --cat2: #f0932b;
+            --cat3: #eb4d4b;
         }
 
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: 'Press Start 2P', cursive;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
-            touch-action: none;
+            display: flex; flex-direction: column; align-items: center;
+            height: 100vh; overflow: hidden; touch-action: manipulation;
         }
 
-        /* ---- ECRANS ---- */
-        #splash-screen, #game-screen, #win-modal {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            background-color: var(--bg-color);
-            transition: opacity 0.5s;
+        /* ---- UTILS ---- */
+        .hidden { display: none !important; }
+        .screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background-color: var(--bg-color); z-index: 10;
         }
 
-        .hidden {
-            display: none !important;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* ---- ACCUEIL ---- */
-        h1 {
-            font-size: 30px;
-            color: var(--accent-color);
-            text-shadow: 3px 3px 0 #000;
-            margin-bottom: 20px;
+        /* ---- HUB PRINCIPAL ---- */
+        #hub-screen h1 { font-size: 22px; margin-bottom: 40px; color: var(--gold); text-align: center; }
+        .game-card {
+            background: var(--wall-color);
+            border: 4px solid #fff;
+            padding: 20px;
+            margin: 15px;
+            width: 250px;
             text-align: center;
-        }
-
-        .pixel-btn {
-            background-color: var(--accent-color);
-            border: 4px solid #fff;
-            padding: 15px 30px;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 16px;
-            color: #fff;
             cursor: pointer;
-            box-shadow: 4px 4px 0 #000;
-            margin-top: 20px;
+            box-shadow: 6px 6px 0 #000;
         }
-        .pixel-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #000; }
+        .game-card:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 #000; }
+        .icon { font-size: 40px; margin-bottom: 10px; }
 
-        /* ---- JEU ---- */
-        #game-container {
-            position: relative;
-            border: 4px solid #fff;
-            box-shadow: 0 0 20px rgba(233, 69, 96, 0.4);
-            margin-bottom: 15px;
-            background: #000;
+        /* ---- ASK ME : CATEGORIES ---- */
+        .cat-container { display: flex; flex-direction: column; gap: 20px; width: 85%; }
+        .cat-card {
+            padding: 20px; border: 4px solid #fff; text-align: center;
+            cursor: pointer; font-size: 12px; box-shadow: 4px 4px 0 #000;
+        }
+        .cat-card.c1 { background: var(--cat1); }
+        .cat-card.c2 { background: var(--cat2); }
+        .cat-card.c3 { background: var(--cat3); }
+
+        /* ---- ASK ME : GRILLE DE CARTES ---- */
+        #cards-grid-screen { justify-content: flex-start; overflow-y: auto; padding-top: 20px; }
+        .grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 10px; padding: 20px; width: 90%; max-width: 500px;
+        }
+        
+        /* Animation Flip */
+        .card-item {
+            aspect-ratio: 2/3; perspective: 1000px; cursor: pointer;
+        }
+        .card-inner {
+            position: relative; width: 100%; height: 100%;
+            text-align: center; transition: transform 0.6s;
+            transform-style: preserve-3d; border: 2px solid #fff;
+        }
+        .card-item.flipped .card-inner { transform: rotateY(180deg); }
+        
+        .card-front, .card-back {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; display: flex;
+            align-items: center; justify-content: center; padding: 5px; box-sizing: border-box;
+        }
+        .card-front { background: var(--wall-color); font-size: 18px; color: var(--gold); }
+        .card-back {
+            background: #fff; color: #000;
+            transform: rotateY(180deg); font-size: 8px; font-family: sans-serif;
+            font-weight: bold; line-height: 1.2;
         }
 
-        canvas {
-            display: block;
-            image-rendering: pixelated;
+        /* ---- BOUTONS RETOUR ---- */
+        .back-btn {
+            margin: 20px; padding: 10px 20px;
+            background: #444; color: #fff; border: 2px solid #fff;
+            font-family: 'Press Start 2P'; font-size: 10px; cursor: pointer;
         }
 
-        /* ---- CONTROLES TACTILES ---- */
-        #controls {
-            display: grid;
-            grid-template-columns: 60px 60px 60px;
-            grid-template-rows: 60px 60px;
-            gap: 8px;
-        }
-
-        /* Cache les contrôles sur grand écran */
-        @media (min-width: 800px) { #controls { display: none; } }
-
+        /* ---- JOIN ME (LABYRINTHE) ---- */
+        #game-container { border: 4px solid #fff; background: #000; margin-bottom: 10px; }
+        canvas { display: block; image-rendering: pixelated; }
+        #controls { display: grid; grid-template-columns: 60px 60px 60px; grid-template-rows: 60px 60px; gap: 8px; }
         .d-pad-btn {
-            width: 60px; height: 60px;
-            background-color: rgba(255, 255, 255, 0.15);
-            border: 2px solid rgba(255,255,255,0.4);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            user-select: none;
-            cursor: pointer;
-            color: #fff;
+            width: 60px; height: 60px; background: rgba(255,255,255,0.1);
+            border: 2px solid #fff; display: flex; align-items: center; justify-content: center;
         }
-        .d-pad-btn:active { background-color: var(--accent-color); }
-        .up { grid-column: 2; grid-row: 1; }
-        .left { grid-column: 1; grid-row: 2; }
-        .down { grid-column: 2; grid-row: 2; }
-        .right { grid-column: 3; grid-row: 2; }
 
-        /* ---- VICTOIRE ---- */
-        #win-modal { background-color: rgba(0, 0, 0, 0.95); }
-        .love-msg {
-            margin: 20px;
-            text-align: center;
-            line-height: 1.8;
-            font-size: 12px;
-            color: #dcdde1;
-            max-width: 85%;
-            border: 2px dashed var(--accent-color);
-            padding: 15px;
-        }
-        .heart-beat {
-            font-size: 50px;
-            color: var(--accent-color);
-            animation: beat 0.8s infinite alternate;
-        }
+        /* VICTOIRE */
+        .heart-beat { font-size: 50px; color: var(--accent-color); animation: beat 0.8s infinite alternate; }
         @keyframes beat { 0% { transform: scale(1); } 100% { transform: scale(1.2); } }
-
     </style>
 </head>
 <body>
 
-    <div id="splash-screen">
-        <div style="font-size: 50px; margin-bottom: 10px;">👸 ❤️</div>
-        <h1>JOIN ME!</h1>
-        <p style="font-size: 10px; margin-bottom: 30px; color: #a5b1c2;">Trouve ton chemin vers mon cœur...</p>
-        <button class="pixel-btn" onclick="startGame()">JOUER</button>
+    <div id="hub-screen" class="screen">
+        <h1>MY LOVE BOX</h1>
+        <div class="game-card" onclick="showJoinMe()">
+            <div class="icon">🏰</div>
+            <div>JOIN ME!</div>
+        </div>
+        <div class="game-card" onclick="showAskMe()">
+            <div class="icon">❓</div>
+            <div>ASK ME!</div>
+        </div>
     </div>
 
-    <div id="game-screen" class="hidden">
-        <div id="game-container">
-            <canvas id="gameCanvas"></canvas>
+    <div id="askme-cats" class="screen hidden">
+        <h1 style="font-size: 18px;">CHOISIS TON MODE</h1>
+        <div class="cat-container">
+            <div class="cat-card c1" onclick="loadQuestions(1)">BUTTERFLY<br><small>Soft & Emotion</small></div>
+            <div class="cat-card c2" onclick="loadQuestions(2)">SPICY TALKS<br><small>Seduction</small></div>
+            <div class="cat-card c3" onclick="loadQuestions(3)">NO LIMITS<br><small>Intense</small></div>
         </div>
-        
+        <button class="back-btn" onclick="goToHub()">⬅ RETOUR MENU</button>
+    </div>
+
+    <div id="cards-grid-screen" class="screen hidden">
+        <h2 id="current-cat-title" style="font-size: 12px; margin: 10px;"></h2>
+        <div class="grid" id="main-grid"></div>
+        <button class="back-btn" onclick="showAskMe()">⬅ CATEGORIES</button>
+    </div>
+
+    <div id="game-screen" class="screen hidden">
+        <div id="game-container"><canvas id="gameCanvas"></canvas></div>
         <div id="controls">
-            <div class="d-pad-btn up" ontouchstart="handleInput(0, -1, event)" onmousedown="movePlayer(0, -1)">▲</div>
-            <div class="d-pad-btn left" ontouchstart="handleInput(-1, 0, event)" onmousedown="movePlayer(-1, 0)">◀</div>
-            <div class="d-pad-btn down" ontouchstart="handleInput(0, 1, event)" onmousedown="movePlayer(0, 1)">▼</div>
-            <div class="d-pad-btn right" ontouchstart="handleInput(1, 0, event)" onmousedown="movePlayer(1, 0)">▶</div>
+            <div class="d-pad-btn" style="grid-column:2" ontouchstart="movePlayer(0,-1,event)" onmousedown="movePlayer(0,-1)">▲</div>
+            <div class="d-pad-btn" style="grid-column:1;grid-row:2" ontouchstart="movePlayer(-1,0,event)" onmousedown="movePlayer(-1,0)">◀</div>
+            <div class="d-pad-btn" style="grid-column:2;grid-row:2" ontouchstart="movePlayer(0,1,event)" onmousedown="movePlayer(0,1)">▼</div>
+            <div class="d-pad-btn" style="grid-column:3;grid-row:2" ontouchstart="movePlayer(1,0,event)" onmousedown="movePlayer(1,0)">▶</div>
         </div>
+        <button class="back-btn" onclick="goToHub()">⬅ QUITTER</button>
     </div>
 
-    <div id="win-modal" class="hidden">
+    <div id="win-modal" class="screen hidden">
         <div class="heart-beat">❤️</div>
-        <h1 style="margin-top: 20px;">TU AS GAGNÉ !</h1>
-        <div class="love-msg">
-            Bravo mon amour !<br>
-            Tu as trouvé le chemin.<br>
-            Peu importe les obstacles,<br>
-            je serai toujours là pour toi.<br><br>
-            <strong>Je t'aime !</strong>
-        </div>
-        <button class="pixel-btn" onclick="location.reload()">REJOUER</button>
+        <h1 style="font-size:18px;">TU AS GAGNÉ !</h1>
+        <p style="text-align:center; font-size:10px; padding:20px;">Peu importe les obstacles, je te rejoindrai toujours. Je t'aime.</p>
+        <button class="back-btn" onclick="goToHub()">RETOUR MENU</button>
     </div>
 
     <script>
+        // --- DATA QUESTIONS ---
+        const questions = {
+            1: [
+                "Quel est ton plus beau souvenir avec moi ?", "Quand t’es-tu sentie la plus en sécurité avec moi ?", "Qu’est-ce qui t’a fait tomber amoureuse ?", "Quel détail chez moi te rassure le plus ?", "Quand tu penses à nous, quelle image vient en premier ?", "Qu’est-ce que je fais qui te fait sourire sans raison ?", "Quel moment simple avec moi t’a marquée ?", "Qu’est-ce que tu admires le plus chez moi ?", "Quand est-ce que tu t’es sentie vraiment comprise ?", "Quel surnom de moi tu préfères ?", "Quel geste de ma part te touche le plus ?", "Qu’est-ce qui te fait te dire “c’est lui” ?", "Quel souvenir tu aimerais revivre avec moi ?", "Quand t’es-tu sentie fière de nous ?", "Quelle qualité chez moi te rassure pour l’avenir ?", "Quel moment t’a fait sentir aimée profondément ?", "Qu’est-ce que je fais mieux que les autres ?", "Quand tu parles de moi, tu dis quoi ?", "Qu’est-ce que tu aimerais qu’on fasse plus souvent ?", "Qu’est-ce que tu aimerais ne jamais perdre entre nous ?"
+            ],
+            2: [
+                "À quel moment tu as commencé à me désirer ?", "Quel regard de ma part te fait fondre ?", "Quand est-ce que la tension entre nous est la plus forte ?", "Quel moment te donne encore des frissons ?", "Qu’est-ce qui t’excite le plus dans mon attitude ?", "Quand tu penses à notre intimité, tu ressens quoi ?", "Quel instant t’a surprise par son intensité ?", "Qu’est-ce que j’ai fait qui t’a troublée sans le vouloir ?", "Quand tu es près de moi, qu’est-ce que ton corps ressent ?", "Quel moment t’a donné envie de te rapprocher encore plus ?", "Quelle partie de notre proximité te fait perdre le contrôle ?", "Quand est-ce que tu as senti que ça devenait sérieux ?", "Quel silence entre nous était chargé ?", "Qu’est-ce que tu aimerais que je fasse plus lentement ?", "Quel moment t’a fait rougir ?", "Quand est-ce que tu as senti une vraie alchimie ?", "Qu’est-ce qui te donne envie de me provoquer ?", "Quel souvenir te fait encore sourire toute seule ?", "Quand tu penses à moi la nuit, tu penses à quoi ?", "Qu’est-ce qui te fait sentir désirée par moi ?"
+            ],
+            3: [
+                "Comment ton corps a-t-il réagi la première fois que le plaisir est devenu incontrôlable ?", "Quel moment t’a fait perdre toute maîtrise face à moi ?", "Qu’est-ce que tu as ressenti quand tu m’as provoqué sans détourner le regard ?", "À quel point ton désir était fort quand on était collés sans aller plus loin ?", "Quand tu avais envie de plus, qu’est-ce qui brûlait le plus en toi ?", "Comment te sens-tu quand je te fais attendre alors que tout ton corps en veut encore ?", "Quel pic de plaisir t’a le plus surprise sans que tout soit consommé ?", "À quel point ton corps réagit quand on est à la limite sans la franchir ?", "Quel moment t’a fait découvrir une nouvelle facette de ton désir ?", "Quand tu as voulu que ça aille plus loin, qu’est-ce qui te faisait trembler ?", "Quel frisson intense as-tu ressenti quand tu as complètement lâché prise ?", "À quel point le contrôle que j’ai sur ton plaisir te bouleverse ?", "Quelle limite t’a donné envie d’être dépassée pour la première fois ?", "Quel moment t’a fait oublier le temps et l’espace ?", "Qu’est-ce qui te fait craquer émotionnellement juste avant que tout bascule ?", "Quelle sensation te revient instantanément quand tu repenses à nos moments les plus tendus ?", "Quand tu imagines aller enfin jusqu’au bout, qu’est-ce qui déclenche ton désir ?", "Quel instant t’a fait sentir totalement exposée et désirée ?", "À quel point l’attente a rendu le plaisir encore plus violent ?", "Quel est le moment où tu t’es sentie complètement submergée par le désir ?"
+            ]
+        };
+
+        // --- NAVIGATION ---
+        function hideAll() {
+            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+        }
+
+        function goToHub() { hideAll(); document.getElementById('hub-screen').classList.remove('hidden'); isGameRunning = false; }
+        
+        function showAskMe() { 
+            hideAll(); 
+            document.getElementById('askme-cats').classList.remove('hidden'); 
+        }
+
+        function loadQuestions(catId) {
+            hideAll();
+            const screen = document.getElementById('cards-grid-screen');
+            screen.classList.remove('hidden');
+            const grid = document.getElementById('main-grid');
+            grid.innerHTML = '';
+            
+            const titles = ["", "BUTTERFLY MODE", "SPICY TALKS", "NO LIMITS"];
+            document.getElementById('current-cat-title').innerText = titles[catId];
+
+            questions[catId].forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'card-item';
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front">${index + 1}</div>
+                        <div class="card-back">${q}</div>
+                    </div>
+                `;
+                card.onclick = () => card.classList.toggle('flipped');
+                grid.appendChild(card);
+            });
+        }
+
+        // --- LOGIQUE JOIN ME (REPRISE) ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        
-        let tileSize = 28; // Taille des cases
-        let cols, rows;
-        let map = [];
-        let player = { x: 1, y: 1 };
-        let goal = { x: 1, y: 1 };
-        let isGameRunning = false;
+        let tileSize = 24, cols, rows, map = [], player = {x:1, y:1}, goal = {x:1, y:1}, isGameRunning = false;
 
-        // --- 1. CONFIGURATION DU CANVAS (Taille écran) ---
-        function resizeCanvas() {
-            // On calcule combien de cases peuvent tenir sur l'écran
-            // On laisse un peu de marge pour les boutons (hauteur - 250px)
-            const maxWidth = window.innerWidth - 30;
-            const maxHeight = window.innerHeight - 240; 
-            
-            let tilesX = Math.floor(maxWidth / tileSize);
-            let tilesY = Math.floor(maxHeight / tileSize);
-
-            // Doit être impair pour l'algo de labyrinthe
-            if (tilesX % 2 === 0) tilesX--;
-            if (tilesY % 2 === 0) tilesY--;
-
-            cols = tilesX;
-            rows = tilesY;
-
-            canvas.width = cols * tileSize;
-            canvas.height = rows * tileSize;
+        function showJoinMe() {
+            hideAll();
+            document.getElementById('game-screen').classList.remove('hidden');
+            initJoinMe();
         }
 
-        // --- 2. GENERATION DU LABYRINTHE ---
+        function initJoinMe() {
+            const size = Math.min(window.innerWidth - 40, window.innerHeight - 300);
+            let tiles = Math.floor(size / tileSize);
+            if (tiles % 2 === 0) tiles--;
+            cols = rows = tiles;
+            canvas.width = canvas.height = cols * tileSize;
+            generateMaze();
+            isGameRunning = true;
+            loop();
+        }
+
         function generateMaze() {
-            map = [];
-            // Remplir de murs
-            for (let y = 0; y < rows; y++) {
-                let row = [];
-                for (let x = 0; x < cols; x++) row.push(1);
-                map.push(row);
+            map = Array(rows).fill().map(() => Array(cols).fill(1));
+            const stack = [{x:1, y:1}];
+            map[1][1] = 0;
+            while(stack.length > 0) {
+                const curr = stack[stack.length-1];
+                const dirs = [{x:0,y:-2},{x:0,y:2},{x:-2,y:0},{x:2,y:0}].filter(d => {
+                    const nx=curr.x+d.x, ny=curr.y+d.y;
+                    return nx>0 && nx<cols-1 && ny>0 && ny<rows-1 && map[ny][nx]===1;
+                });
+                if(dirs.length > 0) {
+                    const d = dirs[Math.floor(Math.random()*dirs.length)];
+                    map[curr.y+d.y/2][curr.x+d.x/2] = 0;
+                    map[curr.y+d.y][curr.x+d.x] = 0;
+                    stack.push({x:curr.x+d.x, y:curr.y+d.y});
+                } else stack.pop();
             }
-
-            const stack = [];
-            const start = { x: 1, y: 1 };
-            map[start.y][start.x] = 0;
-            stack.push(start);
-
-            const directions = [{x:0, y:-2}, {x:0, y:2}, {x:-2, y:0}, {x:2, y:0}];
-
-            while (stack.length > 0) {
-                const current = stack[stack.length - 1];
-                const validNeighbors = [];
-
-                for (let dir of directions) {
-                    const nx = current.x + dir.x;
-                    const ny = current.y + dir.y;
-                    if (nx > 0 && nx < cols - 1 && ny > 0 && ny < rows - 1 && map[ny][nx] === 1) {
-                        validNeighbors.push(dir);
-                    }
-                }
-
-                if (validNeighbors.length > 0) {
-                    const chosen = validNeighbors[Math.floor(Math.random() * validNeighbors.length)];
-                    map[current.y + chosen.y/2][current.x + chosen.x/2] = 0;
-                    map[current.y + chosen.y][current.x + chosen.x] = 0;
-                    stack.push({ x: current.x + chosen.x, y: current.y + chosen.y });
-                } else {
-                    stack.pop();
-                }
-            }
-            player = { x: 1, y: 1 };
-            goal = { x: cols - 2, y: rows - 2 };
-            map[goal.y][goal.x] = 0;
-        }
-
-        // --- 3. DESSIN (Graphismes Améliorés) ---
-        
-        function drawPlayerSprite(x, y) {
-            const cx = x * tileSize;
-            const cy = y * tileSize;
-            const s = tileSize / 16; // Echelle relative
-
-            // Couleurs
-            const skin = '#f5cba7';
-            const hair = '#f1c40f'; 
-            const dress = '#e94560'; 
-            const dressLight = '#ff8fab'; 
-            const crown = '#ffd700';
-
-            // Dessin pixel par pixel (Princesse)
-            ctx.fillStyle = crown; ctx.fillRect(cx+6*s, cy+1*s, 4*s, 2*s); // Couronne
-            ctx.fillStyle = hair; ctx.fillRect(cx+4*s, cy+3*s, 8*s, 3*s); // Cheveux
-            ctx.fillStyle = skin; ctx.fillRect(cx+5*s, cy+5*s, 6*s, 5*s); // Tête
-            ctx.fillStyle = '#000'; ctx.fillRect(cx+6*s, cy+7*s, 1*s, 1*s); ctx.fillRect(cx+9*s, cy+7*s, 1*s, 1*s); // Yeux
-            ctx.fillStyle = dress; ctx.fillRect(cx+6*s, cy+10*s, 4*s, 2*s); // Corps
-            ctx.fillStyle = skin; ctx.fillRect(cx+4*s, cy+10*s, 2*s, 2*s); ctx.fillRect(cx+10*s, cy+10*s, 2*s, 2*s); // Mains
-            ctx.fillStyle = dress; ctx.fillRect(cx+5*s, cy+12*s, 6*s, 4*s); // Robe bas
-            ctx.fillStyle = hair; ctx.fillRect(cx+3*s, cy+5*s, 2*s, 6*s); ctx.fillRect(cx+11*s, cy+5*s, 2*s, 6*s); // Cheveux longs
-        }
-
-        function drawGoalSprite(x, y) {
-            const cx = x * tileSize + tileSize/2;
-            const cy = y * tileSize + tileSize/2;
-            
-            // Pulsation
-            const scale = 1 + Math.sin(Date.now() / 200) * 0.1;
-            const size = (tileSize / 2) * scale;
-
-            ctx.save();
-            ctx.translate(cx, cy);
-            ctx.fillStyle = "#e94560";
-            ctx.beginPath();
-            ctx.moveTo(0, size/2);
-            ctx.bezierCurveTo(0, -size/2, -size, -size/2, -size, -size/4);
-            ctx.bezierCurveTo(-size, size/2, 0, size*0.8, 0, size);
-            ctx.bezierCurveTo(0, size*0.8, size, size/2, size, -size/4);
-            ctx.bezierCurveTo(size, -size/2, size, -size/2, 0, size/2);
-            ctx.fill();
-            ctx.restore();
+            player = {x:1, y:1}; goal = {x:cols-2, y:rows-2}; map[goal.y][goal.x] = 0;
         }
 
         function draw() {
-            // Fond (Murs)
-            ctx.fillStyle = '#16213e';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Chemin
+            ctx.fillStyle = '#16213e'; ctx.fillRect(0,0,canvas.width,canvas.height);
             ctx.fillStyle = '#0f3460';
-            for (let y = 0; y < rows; y++) {
-                for (let x = 0; x < cols; x++) {
-                    if (map[y][x] === 0) {
-                        ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
-                    }
+            for(let y=0; y<rows; y++) for(let x=0; x<cols; x++) if(map[y][x]===0) ctx.fillRect(x*tileSize, y*tileSize, tileSize, tileSize);
+            
+            // Goal (Heart)
+            ctx.fillStyle = '#e94560'; ctx.beginPath();
+            const gx = goal.x*tileSize+tileSize/2, gy = goal.y*tileSize+tileSize/2, s=tileSize/4;
+            ctx.arc(gx-s/2, gy-s/2, s/2, Math.PI, 0); ctx.arc(gx+s/2, gy-s/2, s/2, Math.PI, 0);
+            ctx.lineTo(gx, gy+s); ctx.fill();
+
+            // Player (Princess)
+            const px = player.x*tileSize, py = player.y*tileSize, ps = tileSize/10;
+            ctx.fillStyle = '#f1c40f'; ctx.fillRect(px+2*ps, py+2*ps, 6*ps, 2*ps); // Hair
+            ctx.fillStyle = '#f5cba7'; ctx.fillRect(px+3*ps, py+4*ps, 4*ps, 3*ps); // Face
+            ctx.fillStyle = '#e94560'; ctx.fillRect(px+2*ps, py+7*ps, 6*ps, 3*ps); // Dress
+        }
+
+        function movePlayer(dx, dy, e) {
+            if(e) e.preventDefault();
+            if(!isGameRunning) return;
+            if(map[player.y+dy] && map[player.y+dy][player.x+dx] === 0) {
+                player.x += dx; player.y += dy;
+                if(player.x === goal.x && player.y === goal.y) {
+                    isGameRunning = false;
+                    document.getElementById('win-modal').classList.remove('hidden');
                 }
             }
-
-            drawGoalSprite(goal.x, goal.y);
-            drawPlayerSprite(player.x, player.y);
         }
 
-        // --- 4. LOGIQUE JEU ---
-        function movePlayer(dx, dy) {
-            if (!isGameRunning) return;
-            const nx = player.x + dx;
-            const ny = player.y + dy;
+        function loop() { if(isGameRunning) { draw(); requestAnimationFrame(loop); } }
 
-            if (nx >= 0 && nx < cols && ny >= 0 && ny < rows && map[ny][nx] === 0) {
-                player.x = nx;
-                player.y = ny;
-                // Pas besoin de redraw() ici car la boucle d'animation le fait
-                checkWin();
-            }
-        }
-
-        function checkWin() {
-            if (player.x === goal.x && player.y === goal.y) {
-                isGameRunning = false;
-                setTimeout(() => {
-                    document.getElementById('win-modal').classList.remove('hidden');
-                }, 200);
-            }
-        }
-
-        function gameLoop() {
-            if (isGameRunning) {
-                draw(); // Redessine en boucle pour l'animation du cœur
-                requestAnimationFrame(gameLoop);
-            }
-        }
-
-        function startGame() {
-            document.getElementById('splash-screen').classList.add('hidden');
-            document.getElementById('game-screen').classList.remove('hidden');
-            resizeCanvas();
-            generateMaze();
-            isGameRunning = true;
-            gameLoop();
-        }
-
-        function handleInput(dx, dy, e) {
-            e.preventDefault(); // Empeche le zoom tactile
-            movePlayer(dx, dy);
-        }
-
-        window.addEventListener('keydown', (e) => {
-            if (!isGameRunning) return;
-            if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault();
-            
-            switch(e.key) {
-                case 'ArrowUp': movePlayer(0, -1); break;
-                case 'ArrowDown': movePlayer(0, 1); break;
-                case 'ArrowLeft': movePlayer(-1, 0); break;
-                case 'ArrowRight': movePlayer(1, 0); break;
-            }
+        window.addEventListener('keydown', e => {
+            if(e.key==='ArrowUp') movePlayer(0,-1);
+            if(e.key==='ArrowDown') movePlayer(0,1);
+            if(e.key==='ArrowLeft') movePlayer(-1,0);
+            if(e.key==='ArrowRight') movePlayer(1,0);
         });
-
     </script>
 </body>
 </html>
