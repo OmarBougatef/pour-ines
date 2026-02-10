@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Romantic Game Box</title>
+    <title>My Love Platform</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
@@ -19,6 +19,8 @@
             --cat3: #eb4d4b;
         }
 
+        * { box-sizing: border-box; }
+
         body {
             margin: 0; padding: 0;
             background-color: var(--bg-color);
@@ -28,8 +30,8 @@
             height: 100vh; overflow: hidden; touch-action: manipulation;
         }
 
-        /* ---- UTILS ---- */
         .hidden { display: none !important; }
+
         .screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -37,41 +39,37 @@
         }
 
         /* ---- HUB PRINCIPAL ---- */
-        #hub-screen h1 { font-size: 22px; margin-bottom: 40px; color: var(--gold); text-align: center; }
+        #hub-screen h1 { font-size: 18px; margin-bottom: 40px; color: var(--gold); text-align: center; line-height: 1.5; }
         .game-card {
             background: var(--wall-color);
             border: 4px solid #fff;
-            padding: 20px;
-            margin: 15px;
-            width: 250px;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 6px 6px 0 #000;
+            padding: 20px; margin: 15px;
+            width: 260px; text-align: center;
+            cursor: pointer; box-shadow: 6px 6px 0 #000;
         }
         .game-card:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 #000; }
         .icon { font-size: 40px; margin-bottom: 10px; }
 
         /* ---- ASK ME : CATEGORIES ---- */
-        .cat-container { display: flex; flex-direction: column; gap: 20px; width: 85%; }
+        .cat-container { display: flex; flex-direction: column; gap: 15px; width: 90%; }
         .cat-card {
-            padding: 20px; border: 4px solid #fff; text-align: center;
-            cursor: pointer; font-size: 12px; box-shadow: 4px 4px 0 #000;
+            padding: 15px; border: 4px solid #fff; text-align: center;
+            cursor: pointer; box-shadow: 4px 4px 0 #000;
         }
+        .cat-card h3 { font-size: 12px; margin: 0 0 5px 0; }
+        .cat-card small { font-size: 8px; opacity: 0.9; }
         .cat-card.c1 { background: var(--cat1); }
         .cat-card.c2 { background: var(--cat2); }
         .cat-card.c3 { background: var(--cat3); }
 
-        /* ---- ASK ME : GRILLE DE CARTES ---- */
+        /* ---- ASK ME : GRID ---- */
         #cards-grid-screen { justify-content: flex-start; overflow-y: auto; padding-top: 20px; }
         .grid {
             display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 10px; padding: 20px; width: 90%; max-width: 500px;
+            gap: 8px; padding: 15px; width: 100%; max-width: 500px;
         }
         
-        /* Animation Flip */
-        .card-item {
-            aspect-ratio: 2/3; perspective: 1000px; cursor: pointer;
-        }
+        .card-item { aspect-ratio: 2/3; perspective: 1000px; cursor: pointer; }
         .card-inner {
             position: relative; width: 100%; height: 100%;
             text-align: center; transition: transform 0.6s;
@@ -82,32 +80,37 @@
         .card-front, .card-back {
             position: absolute; width: 100%; height: 100%;
             backface-visibility: hidden; display: flex;
-            align-items: center; justify-content: center; padding: 5px; box-sizing: border-box;
+            align-items: center; justify-content: center; padding: 5px;
         }
-        .card-front { background: var(--wall-color); font-size: 18px; color: var(--gold); }
+        .card-front { 
+            background: #fff; color: #000; font-size: 24px;
+            background-image: radial-gradient(#ddd 10%, transparent 10%);
+            background-size: 10px 10px;
+        }
         .card-back {
-            background: #fff; color: #000;
-            transform: rotateY(180deg); font-size: 8px; font-family: sans-serif;
-            font-weight: bold; line-height: 1.2;
+            background: #f1f1f1; color: #000;
+            transform: rotateY(180deg); font-size: 11px; 
+            font-family: Arial, sans-serif; font-weight: bold; line-height: 1.4;
+            border: 2px solid var(--accent-color);
+            direction: rtl; /* Pour l'arabe */
         }
 
-        /* ---- BOUTONS RETOUR ---- */
         .back-btn {
-            margin: 20px; padding: 10px 20px;
-            background: #444; color: #fff; border: 2px solid #fff;
-            font-family: 'Press Start 2P'; font-size: 10px; cursor: pointer;
+            margin: 20px; padding: 12px 20px;
+            background: #333; color: #fff; border: 2px solid #fff;
+            font-family: 'Press Start 2P'; font-size: 9px; cursor: pointer;
         }
 
-        /* ---- JOIN ME (LABYRINTHE) ---- */
+        /* ---- JOIN ME (Labyrinth) ---- */
         #game-container { border: 4px solid #fff; background: #000; margin-bottom: 10px; }
         canvas { display: block; image-rendering: pixelated; }
         #controls { display: grid; grid-template-columns: 60px 60px 60px; grid-template-rows: 60px 60px; gap: 8px; }
         .d-pad-btn {
-            width: 60px; height: 60px; background: rgba(255,255,255,0.1);
+            width: 60px; height: 60px; background: rgba(255,255,255,0.15);
             border: 2px solid #fff; display: flex; align-items: center; justify-content: center;
+            font-size: 20px; color: #fff; border-radius: 8px;
         }
 
-        /* VICTOIRE */
         .heart-beat { font-size: 50px; color: var(--accent-color); animation: beat 0.8s infinite alternate; }
         @keyframes beat { 0% { transform: scale(1); } 100% { transform: scale(1.2); } }
     </style>
@@ -115,7 +118,7 @@
 <body>
 
     <div id="hub-screen" class="screen">
-        <h1>MY LOVE BOX</h1>
+        <h1>ROMANTIC GAME BOX</h1>
         <div class="game-card" onclick="showJoinMe()">
             <div class="icon">🏰</div>
             <div>JOIN ME!</div>
@@ -127,19 +130,28 @@
     </div>
 
     <div id="askme-cats" class="screen hidden">
-        <h1 style="font-size: 18px;">CHOISIS TON MODE</h1>
+        <h2 style="font-size: 14px;">CHOISIS TON MODE</h2>
         <div class="cat-container">
-            <div class="cat-card c1" onclick="loadQuestions(1)">BUTTERFLY<br><small>Soft & Emotion</small></div>
-            <div class="cat-card c2" onclick="loadQuestions(2)">SPICY TALKS<br><small>Seduction</small></div>
-            <div class="cat-card c3" onclick="loadQuestions(3)">NO LIMITS<br><small>Intense</small></div>
+            <div class="cat-card c1" onclick="loadQuestions(1)">
+                <h3>Butterfly Mode</h3>
+                <small>Soft & Émotion</small>
+            </div>
+            <div class="cat-card c2" onclick="loadQuestions(2)">
+                <h3>Spicy Talks</h3>
+                <small>Séduction & Désir</small>
+            </div>
+            <div class="cat-card c3" onclick="loadQuestions(3)">
+                <h3>No Limits</h3>
+                <small>Intense & Passion</small>
+            </div>
         </div>
         <button class="back-btn" onclick="goToHub()">⬅ RETOUR MENU</button>
     </div>
 
     <div id="cards-grid-screen" class="screen hidden">
-        <h2 id="current-cat-title" style="font-size: 12px; margin: 10px;"></h2>
+        <h2 id="current-cat-title" style="font-size: 10px; margin: 10px; color: var(--gold);"></h2>
         <div class="grid" id="main-grid"></div>
-        <button class="back-btn" onclick="showAskMe()">⬅ CATEGORIES</button>
+        <button class="back-btn" onclick="showAskMe()">⬅ CATÉGORIES</button>
     </div>
 
     <div id="game-screen" class="screen hidden">
@@ -155,36 +167,33 @@
 
     <div id="win-modal" class="screen hidden">
         <div class="heart-beat">❤️</div>
-        <h1 style="font-size:18px;">TU AS GAGNÉ !</h1>
-        <p style="text-align:center; font-size:10px; padding:20px;">Peu importe les obstacles, je te rejoindrai toujours. Je t'aime.</p>
+        <h1>TU AS GAGNÉ !</h1>
+        <p style="text-align:center; font-size:10px; padding:20px; line-height:1.8;">
+            Comme dans ce jeu, je trouverai toujours mon chemin vers toi. Je t'aime !
+        </p>
         <button class="back-btn" onclick="goToHub()">RETOUR MENU</button>
     </div>
 
     <script>
-        // --- DATA QUESTIONS ---
+        // --- DATA QUESTIONS (ARABE) ---
         const questions = {
             1: [
-                "Quel est ton plus beau souvenir avec moi ?", "Quand t’es-tu sentie la plus en sécurité avec moi ?", "Qu’est-ce qui t’a fait tomber amoureuse ?", "Quel détail chez moi te rassure le plus ?", "Quand tu penses à nous, quelle image vient en premier ?", "Qu’est-ce que je fais qui te fait sourire sans raison ?", "Quel moment simple avec moi t’a marquée ?", "Qu’est-ce que tu admires le plus chez moi ?", "Quand est-ce que tu t’es sentie vraiment comprise ?", "Quel surnom de moi tu préfères ?", "Quel geste de ma part te touche le plus ?", "Qu’est-ce qui te fait te dire “c’est lui” ?", "Quel souvenir tu aimerais revivre avec moi ?", "Quand t’es-tu sentie fière de nous ?", "Quelle qualité chez moi te rassure pour l’avenir ?", "Quel moment t’a fait sentir aimée profondément ?", "Qu’est-ce que je fais mieux que les autres ?", "Quand tu parles de moi, tu dis quoi ?", "Qu’est-ce que tu aimerais qu’on fasse plus souvent ?", "Qu’est-ce que tu aimerais ne jamais perdre entre nous ?"
+                "شنوة أحلى ذكرى عندك معايا ما تنساهاش؟", "أنا هي أكثر لحظة حسيت فيها روحك متهنية و 'Safe' معايا؟", "شنوة الحاجة اللي خلاتك تغرم بيا وتوقع في حبي؟", "شنوة التفصيل اللي فيّ يطمنك أكثر حاجة؟", "كي تخمم فينا، شنوة أول صورة تجي بين عينيك؟", "شنوة الحاجة اللي نعملها تخليك تتبسم من غير سبب؟", "شنوة أبسط لحظة عشناها وبقات محفورة في بالك؟", "شنوة أكثر حاجة تعجبك في شخصيتي وتقدرها؟", "أنا هي المرة اللي حسيت فيها اللي أنا فاهملك روحك بالباهي؟", "شنوة أحلى اسم 'Dala3' نحبك تناديني بيه؟", "شنوة أكثر حركة (Geste) نعملها تمسلك قلبك؟", "شنوة الموقف اللي خلاك تقول في داخلك 'هذا هو اللي حاجتي بيه'؟", "شنوة الذكرى اللي تحب نرجعوا نعيشوها مرة أخرى؟", "وقتاش حسيت روحك فخورة بينا وبلي وصلنا له؟", "شنوة الصفة اللي فيّ تخليك مطمنة على مستقبلنا مع بعضنا؟", "أنا هي اللحظة اللي حسيت فيها اللي أنا نحبك من أعماق قلبي؟", "شنوة الحاجة اللي نعملها أنا خير من الناس الكل في عينيك؟", "كي تحكي عليا لصاحباتك ولا لناس أخرى، شنوة تقول؟", "شنوة الحاجة اللي تحبنا نعملوها مع بعضنا أكثر من العادة؟", "شنوة الحاجة اللي تخاف عليها لا تضيع بيناتنا وتحبنا نحافظوا عليها ديما؟"
             ],
             2: [
-                "À quel moment tu as commencé à me désirer ?", "Quel regard de ma part te fait fondre ?", "Quand est-ce que la tension entre nous est la plus forte ?", "Quel moment te donne encore des frissons ?", "Qu’est-ce qui t’excite le plus dans mon attitude ?", "Quand tu penses à notre intimité, tu ressens quoi ?", "Quel instant t’a surprise par son intensité ?", "Qu’est-ce que j’ai fait qui t’a troublée sans le vouloir ?", "Quand tu es près de moi, qu’est-ce que ton corps ressent ?", "Quel moment t’a donné envie de te rapprocher encore plus ?", "Quelle partie de notre proximité te fait perdre le contrôle ?", "Quand est-ce que tu as senti que ça devenait sérieux ?", "Quel silence entre nous était chargé ?", "Qu’est-ce que tu aimerais que je fasse plus lentement ?", "Quel moment t’a fait rougir ?", "Quand est-ce que tu as senti une vraie alchimie ?", "Qu’est-ce qui te donne envie de me provoquer ?", "Quel souvenir te fait encore sourire toute seule ?", "Quand tu penses à moi la nuit, tu penses à quoi ?", "Qu’est-ce qui te fait sentir désirée par moi ?"
+                "أنا هي اللحظة اللي بدأت تشتهي فيّ فيها بالرسمي؟", "أنا هي الغزرة متاعي اللي تخليك تذوب وما عادش تعرف شتقول؟", "وقتاش تحس اللي 'التنشن' (Tension) والشهوة بيناتنا وصلت لـ 'التوب'؟", "شنوة الموقف اللي لتوة كي تتفكرو بدنك يقشعر؟", "شنوة أكثر حاجة في 'الرزانة' متاعي تشعلك وتخليك مشتهيتني؟", "كي تخمم في القرب اللي بيناتنا، شنوة الإحساس اللي يركبك؟", "أنا هي اللحظة اللي فاجأتك فيها الشهوة بقوتها؟", "شنوة الحاجة اللي عملتها أنا (من غير ما نقصد) وخلاتك تتدوخل وتدخل بعضك؟", "كي تبدأ قريبة مني، شنوة أول حاجة بدنك يحس بيها؟", "أنا هي اللحظة اللي خلاتك تحب تقربلي أكثر وتكبش فيّ؟", "شنوة أكثر حاجة في القرب متاعنا تخليك تفقد السيطرة على روحك؟", "وقتاش حسيت اللي الحكاية بيناتنا ولات داخلة فيها الشهوة بالرسمي؟", "تفكر مرة سكتنا فيها أما السكات كان معبي بالرغبة والكلام؟", "شنوة الحاجة اللي تحبني نعملها معاك بأكثر رزانة (Slowly) وبشوية؟", "شنوة الموقف ولا الكلمة اللي خلات وجهك يحمار بالتحشيم والشهوة؟", "وقتاش حسيت اللي فما 'Chimie' قوية بيناتنا خلاتنا نشعلوا؟", "شنوة الحاجة اللي فيّ تخليك تحب تستفزني وتلعب معايا 'لعبة قط وفار'؟", "شنوة الذكرى اللي تخليك تتبسم وحدك وأنت تتفكر في قداش كنا مشتهيين بعضنا؟", "كي تخمم فيّ في الليل وأنت وحدك في الفرش، شنوة يجي لبالك؟", "شنوة الحاجة اللي تخليك تحس روحك مرغوبة ومشتهية برشا من عندي؟"
             ],
             3: [
-                "Comment ton corps a-t-il réagi la première fois que le plaisir est devenu incontrôlable ?", "Quel moment t’a fait perdre toute maîtrise face à moi ?", "Qu’est-ce que tu as ressenti quand tu m’as provoqué sans détourner le regard ?", "À quel point ton désir était fort quand on était collés sans aller plus loin ?", "Quand tu avais envie de plus, qu’est-ce qui brûlait le plus en toi ?", "Comment te sens-tu quand je te fais attendre alors que tout ton corps en veut encore ?", "Quel pic de plaisir t’a le plus surprise sans que tout soit consommé ?", "À quel point ton corps réagit quand on est à la limite sans la franchir ?", "Quel moment t’a fait découvrir une nouvelle facette de ton désir ?", "Quand tu as voulu que ça aille plus loin, qu’est-ce qui te faisait trembler ?", "Quel frisson intense as-tu ressenti quand tu as complètement lâché prise ?", "À quel point le contrôle que j’ai sur ton plaisir te bouleverse ?", "Quelle limite t’a donné envie d’être dépassée pour la première fois ?", "Quel moment t’a fait oublier le temps et l’espace ?", "Qu’est-ce qui te fait craquer émotionnellement juste avant que tout bascule ?", "Quelle sensation te revient instantanément quand tu repenses à nos moments les plus tendus ?", "Quand tu imagines aller enfin jusqu’au bout, qu’est-ce qui déclenche ton désir ?", "Quel instant t’a fait sentir totalement exposée et désirée ?", "À quel point l’attente a rendu le plaisir encore plus violent ?", "Quel est le moment où tu t’es sentie complètement submergée par le désir ?"
+                "كيفاش تتخيل الوجيعة الحلوة متاع أول مرة يدخل فيها زبي في صرمك؟", "شحسيت كي كنت ترضعلي في زبي لين قربت نخرج البزاع؟ حبيت المطعم متاع زبي في فمك؟", "كي نحك زبي بالقوي على بظرك، شنوة الكلمة المسخة اللي تحب تقولها في وذني؟", "كيفاش تحب تكون أول نيكة لينا؟ تحبني ندخلو بالشوية وإلا نغرقو الكل بضربة وحدة؟", "قداش صرمك يبدأ ياكل فيك و'يعطش' لزبي كي تراني شادد روحي وما نحبش ندخلو؟", "كي تبدا عريانة فوقي ونضربك على زعكتك لين تحمار، علاش شهوتك تزيد تقوى؟", "كي نبداو على حرف النيك، شنوة اللي يخليك تنهار عاطفيًا وتفقد السيطرة وأنت تتمنى الدخلة؟", "شنوة أحلى رعشة جاتك كي نحك زبي على صرمك من برا؟", "علاش تولي تترجى فيّ باش 'نقطعهولك' كي نحك زبي بالقوي على نونتك؟", "قداش تحس بلذة كي نضربك على زعكتك لين تولي حمراء؟", "كي نقلك 'يا قحبتي' وأحنا في وسط الشهوة، هل تقلقك وإلا تزيد تشعلك؟", "كي رضعتلك صرمك ولحستلك بظرك، احكيلي شنوة حسيت بالتفصيل؟", "شنوة أحلى شعور جربناه مع بعضنا لتوة، ويخليك كل ما تتفكره تتبل وتشتهيني من جديد؟", "كي تغمض عينيك وتتخيل أول نهار باش نكونوا فيه لبعضنا بالرسمي، شنوة أول حاجة تحبني نعملها لـ نونتك؟", "شنوة أكثر بلاصة في بدنك تحسها 'مجنونة' وتخليك تفقدي السيطرة كي نمسها بلساني وإلا بيدي؟", "كي نتخيل روحي نبزع البزاع متاعي الكل على نونتك المبلولة ونمسحو بيدي, شنوة الإحساس اللي يركبك؟", "شنوة الكلام اللي تحب تسمعو كي نبدأ ننيك فيك بالحق؟", "أعطيني des fantasmes متاع نيك في كل تركينة من دارنا، وين أكثر بلاصة تتخيلني ننيكك فيها؟", "شنوة تتصور روحك تحب خير: نيكة في الصباح وأنت كيما ولدت أمك، وإلا في الليل والضو طافي؟", "شنوة الـ top 3 positions اللي تحب تجربهم في أول نيكة لينا؟"
             ]
         };
 
-        // --- NAVIGATION ---
-        function hideAll() {
-            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-        }
+        const suits = ['♥', '♦', '♣', '♠'];
 
+        // --- NAVIGATION ---
+        function hideAll() { document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden')); }
         function goToHub() { hideAll(); document.getElementById('hub-screen').classList.remove('hidden'); isGameRunning = false; }
-        
-        function showAskMe() { 
-            hideAll(); 
-            document.getElementById('askme-cats').classList.remove('hidden'); 
-        }
+        function showAskMe() { hideAll(); document.getElementById('askme-cats').classList.remove('hidden'); }
 
         function loadQuestions(catId) {
             hideAll();
@@ -197,11 +206,13 @@
             document.getElementById('current-cat-title').innerText = titles[catId];
 
             questions[catId].forEach((q, index) => {
+                const suit = suits[Math.floor(Math.random() * suits.length)];
+                const color = (suit === '♥' || suit === '♦') ? 'red' : 'black';
                 const card = document.createElement('div');
                 card.className = 'card-item';
                 card.innerHTML = `
                     <div class="card-inner">
-                        <div class="card-front">${index + 1}</div>
+                        <div class="card-front" style="color: ${color}">${suit}</div>
                         <div class="card-back">${q}</div>
                     </div>
                 `;
@@ -210,23 +221,22 @@
             });
         }
 
-        // --- LOGIQUE JOIN ME (REPRISE) ---
+        // --- JOIN ME LOGIC (REPRISE À L'IDENTIQUE) ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        let tileSize = 24, cols, rows, map = [], player = {x:1, y:1}, goal = {x:1, y:1}, isGameRunning = false;
+        let tileSize = 28, cols, rows, map = [], player = {x:1, y:1}, goal = {x:1, y:1}, isGameRunning = false;
 
-        function showJoinMe() {
-            hideAll();
-            document.getElementById('game-screen').classList.remove('hidden');
-            initJoinMe();
-        }
+        function showJoinMe() { hideAll(); document.getElementById('game-screen').classList.remove('hidden'); initJoinMe(); }
 
         function initJoinMe() {
-            const size = Math.min(window.innerWidth - 40, window.innerHeight - 300);
-            let tiles = Math.floor(size / tileSize);
-            if (tiles % 2 === 0) tiles--;
-            cols = rows = tiles;
-            canvas.width = canvas.height = cols * tileSize;
+            const w = window.innerWidth - 40;
+            const h = window.innerHeight - 300;
+            let tilesX = Math.floor(w / tileSize);
+            let tilesY = Math.floor(h / tileSize);
+            if (tilesX % 2 === 0) tilesX--;
+            if (tilesY % 2 === 0) tilesY--;
+            cols = tilesX; rows = tilesY;
+            canvas.width = cols * tileSize; canvas.height = rows * tileSize;
             generateMaze();
             isGameRunning = true;
             loop();
@@ -252,22 +262,28 @@
             player = {x:1, y:1}; goal = {x:cols-2, y:rows-2}; map[goal.y][goal.x] = 0;
         }
 
+        function drawPrincess(x, y) {
+            const cx = x * tileSize, cy = y * tileSize, s = tileSize / 16;
+            ctx.fillStyle = '#ffd700'; ctx.fillRect(cx+6*s, cy+s, 4*s, 2*s); // Crown
+            ctx.fillStyle = '#f1c40f'; ctx.fillRect(cx+4*s, cy+3*s, 8*s, 3*s); // Hair
+            ctx.fillStyle = '#f5cba7'; ctx.fillRect(cx+5*s, cy+5*s, 6*s, 5*s); // Face
+            ctx.fillStyle = '#000'; ctx.fillRect(cx+6*s, cy+7*s, s, s); ctx.fillRect(cx+9*s, cy+7*s, s, s); // Eyes
+            ctx.fillStyle = '#e94560'; ctx.fillRect(cx+5*s, cy+10*s, 6*s, 5*s); // Dress
+        }
+
+        function drawGoal(x, y) {
+            const gx = x*tileSize+tileSize/2, gy = y*tileSize+tileSize/2, s=tileSize/3;
+            ctx.fillStyle = '#e94560'; ctx.beginPath();
+            ctx.arc(gx-s/2, gy-s/2, s/2, Math.PI, 0); ctx.arc(gx+s/2, gy-s/2, s/2, Math.PI, 0);
+            ctx.lineTo(gx, gy+s); ctx.fill();
+        }
+
         function draw() {
             ctx.fillStyle = '#16213e'; ctx.fillRect(0,0,canvas.width,canvas.height);
             ctx.fillStyle = '#0f3460';
             for(let y=0; y<rows; y++) for(let x=0; x<cols; x++) if(map[y][x]===0) ctx.fillRect(x*tileSize, y*tileSize, tileSize, tileSize);
-            
-            // Goal (Heart)
-            ctx.fillStyle = '#e94560'; ctx.beginPath();
-            const gx = goal.x*tileSize+tileSize/2, gy = goal.y*tileSize+tileSize/2, s=tileSize/4;
-            ctx.arc(gx-s/2, gy-s/2, s/2, Math.PI, 0); ctx.arc(gx+s/2, gy-s/2, s/2, Math.PI, 0);
-            ctx.lineTo(gx, gy+s); ctx.fill();
-
-            // Player (Princess)
-            const px = player.x*tileSize, py = player.y*tileSize, ps = tileSize/10;
-            ctx.fillStyle = '#f1c40f'; ctx.fillRect(px+2*ps, py+2*ps, 6*ps, 2*ps); // Hair
-            ctx.fillStyle = '#f5cba7'; ctx.fillRect(px+3*ps, py+4*ps, 4*ps, 3*ps); // Face
-            ctx.fillStyle = '#e94560'; ctx.fillRect(px+2*ps, py+7*ps, 6*ps, 3*ps); // Dress
+            drawGoal(goal.x, goal.y);
+            drawPrincess(player.x, player.y);
         }
 
         function movePlayer(dx, dy, e) {
